@@ -26,13 +26,31 @@ fn create_vocabulary(words_len: usize) -> Vec<String>{
     }
 }
 
+fn new_game(vocabulary: Vec<String>){
+    let mut ref_word = get_input();
+
+    while !vocabulary.contains(&ref_word){
+        ref_word = get_input();
+    }
+
+    let attempts: usize = get_input().parse().unwrap();
+
+    for _ in 0..attempts{
+        if get_input() == ref_word{
+            println!("You won!");
+            break;
+        }
+    }
+}
+
 fn main() {
     println!("Welcome to a Rust-y version of Wordle!\nEnter `h` to ask for help.");
     
     let words_len: usize = get_input().parse().unwrap();
 
-    let mut vocabulary: Vec<String> = create_vocabulary(words_len);
+    let vocabulary: Vec<String> = create_vocabulary(words_len);
 
     println!("{:?}", vocabulary);
-
+    
+    new_game(vocabulary);
 }
