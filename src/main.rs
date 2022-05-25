@@ -17,7 +17,7 @@ fn create_vocabulary(words_len: usize) -> Vec<String>{
 
     loop{
         let new_word = get_input();
-        if new_word == "new_game"{
+        if new_word == "NewGame"{
             return vocabulary;
         }
         if new_word.len() == words_len && !vocabulary.contains(&new_word){
@@ -26,31 +26,59 @@ fn create_vocabulary(words_len: usize) -> Vec<String>{
     }
 }
 
-fn new_game(vocabulary: Vec<String>){
+fn print_filtered(){}
+
+fn start_adding(vocabulary: &mut Vec<String>){
+    let words_len = (*vocabulary.get(0).unwrap()).len();
+    loop{
+        let new_word = get_input();
+        if new_word == "StopAdding"{
+            return;
+        }
+        if new_word.len() == words_len && !vocabulary.contains(&new_word){
+            vocabulary.push(new_word);
+        }
+    }
+}
+
+fn new_game(vocabulary: &mut Vec<String>){
     let mut ref_word = get_input();
 
     while !vocabulary.contains(&ref_word){
         ref_word = get_input();
     }
 
-    let attempts: usize = get_input().parse().unwrap();
+    let mut attempts: usize = get_input().parse().unwrap();
 
-    for _ in 0..attempts{
-        if get_input() == ref_word{
-            println!("You won!");
-            break;
+    while attempts > 0 {
+        let input = get_input();
+
+        match input.as_str(){
+            "Print" => print_filtered(),
+            "StartAdding" => start_adding(vocabulary),
+            _ => {
+                if input == ref_word{
+                    println!("You won!");
+                    return;
+                } else {
+                    attempts -= 1;
+                }
+            }
         }
     }
 }
 
 fn main() {
-    println!("Welcome to a Rust-y version of Wordle!\nEnter `h` to ask for help.");
+    println!("Welcome to a Rust-y version of Wordle!\nHow many characters will your words contain?");
     
     let words_len: usize = get_input().parse().unwrap();
 
-    let vocabulary: Vec<String> = create_vocabulary(words_len);
+    println!("Your words will be {} characters long! Start adding words to our vocabulary.", words_len);
+    let mut vocabulary: Vec<String> = create_vocabulary(words_len);
 
     println!("{:?}", vocabulary);
     
-    new_game(vocabulary);
+    new_game(&mut vocabulary);
+
+    println!("{:?}", vocabulary);
 }
