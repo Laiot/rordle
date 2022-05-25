@@ -27,29 +27,37 @@ fn create_vocabulary(words_len: usize) -> Vec<String>{
 }
 
 fn compare_words(reference: &String, attempt: &String){
-    let mut chars_ref: Vec<char> = reference.chars().collect();
+    let mut chars_ref: Vec<Option<char>> = reference.chars().map(|c| Some(c)).collect();
     let chars_atm: Vec<char> = attempt.chars().collect();
-    let mut chars_out: Vec<char> = Vec::new();
+    let mut chars_out: Vec<Option<char>> = Vec::new();
 
     for idx in 0..attempt.len(){
-        if chars_ref[idx] == chars_atm[idx]{
-            chars_out.push('+');
+        if chars_ref[idx] == Some(chars_atm[idx]){
+            chars_out.push(Some('+'));
+            chars_ref[idx] = None;
         } else {
-            let mut cb: bool = true;
-            for check in 0..reference.len(){
-                if chars_ref[check] == chars_atm[idx]{
-                    chars_out.push('|');
-                    chars_ref[check] = '-';
-                    cb = false;
+            chars_out.push(None);
+        }
+    }
+
+    for i1 in 0..attempt.len(){
+        if chars_out[i1] != Some('+'){
+            let mut check: bool = true;
+            for i2 in 0..attempt.len(){
+                if chars_ref[i2] == Some(chars_atm[i1]){
+                    chars_out[i1] = Some('|');
+                    chars_ref[i2] = None;
+                    check = false;
                     break;
                 }
             }
-            if cb{
-                chars_out.push('/');
+            if check{
+                chars_out[i1] = Some('/');
             }
         }
     }
-    println!("{}", String::from_iter(chars_out));
+
+    println!("{}", chars_out.iter().map(|o| o.unwrap()).collect::<String>());
 }
 
 fn print_filtered(){}
