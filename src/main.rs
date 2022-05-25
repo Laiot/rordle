@@ -80,7 +80,24 @@ fn compare_words(reference: &String, attempt: &String, filter: &mut Filter){
     println!("{}", chars_out.iter().map(|o| o.unwrap()).collect::<String>());
 }
 
-fn print_filtered(){}
+fn print_filtered(vocabulary: &Vec<String>, filter: &Filter){
+    'outer: for word in vocabulary{
+        for npr in &filter.nonpresent_chars{
+            if word.contains(*npr){
+                for tfc in &filter.tofind_chars{
+                    if word.chars().filter(|&n| n >= *tfc.0).count() == *tfc.1{
+                        for (pos, cfc) in filter.confirmed_chars.iter().enumerate(){
+                            if word.chars().nth(pos).unwrap() != *cfc{
+                                break 'outer;
+                            }
+                        }
+                        println!("{}", word);
+                    }
+                }
+            }
+        }
+    }
+}
 
 fn start_adding(vocabulary: &mut Vec<String>){
     let words_len = (*vocabulary.get(0).unwrap()).len();
@@ -114,7 +131,7 @@ fn new_game(vocabulary: &mut Vec<String>){
         let input = get_input();
 
         match input.as_str(){
-            "Print" => print_filtered(),
+            "Print" => print_filtered(vocabulary, &filter),
             "StartAdding" => start_adding(vocabulary),
             _ => {
                 if &input == &ref_word{
