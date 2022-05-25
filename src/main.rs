@@ -1,4 +1,10 @@
 use std::io::*;
+use std::collections::HashMap;
+
+struct Filter{
+    confirmed_chars: String,
+    tofind_chars: HashMap<String, usize>
+}
 
 fn get_input() -> String{
     let mut raw_input = String::new();
