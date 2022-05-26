@@ -1,6 +1,21 @@
 use std::io::*;
 use std::collections::HashMap;
 
+/**
+ * Struct used to filter out the words in vocabulary that don't comply with the following constraints: 
+ * + Given character not present in word ✅ 
+ * + Given character is present in known position in word ✅ 
+ * + Given character is not present in known position in word 
+ * + Minimum repetitions of given character in word
+ * + Exact repetitions of given character in word ✅ 
+ * 
+ * @confirmed_chars: vector of same length as word that contains the correct found characters 
+ *  ->  in word in the correct position and the character '-' in the positions where the correct character has not yet been found
+ * 
+ * @tofind_chars: hashmap that contains the characters found in the wrong position in word and how many times they need to be found in word yet
+ * 
+ * @nonpresent_chars: vector containing any character that is not present in word in any position
+ */
 #[derive(Debug)]
 struct Filter{
     confirmed_chars: Vec<char>,
@@ -8,6 +23,10 @@ struct Filter{
     nonpresent_chars: Vec<char>
 }
 
+/**
+ * Function used to get input from standard input 
+ * Returns a String stripped from possible special characters like '/n' and '/r'
+ */
 fn get_input() -> String{
     let mut raw_input = String::new();
     stdin().read_line(&mut raw_input).expect("Something's wrong with your input!");
@@ -20,6 +39,11 @@ fn get_input() -> String{
     return raw_input;
 }
 
+/**
+ * Function used to create a first container for possible words that can be found in the game
+ * @words_len: length that every word in the vocabulary must have
+ * @returns a vector of strings
+ */
 fn create_vocabulary(words_len: usize) -> Vec<String>{
     let mut vocabulary: Vec<String> = Vec::new();
 
@@ -34,6 +58,9 @@ fn create_vocabulary(words_len: usize) -> Vec<String>{
     }
 }
 
+/**
+ * Function that compares two words and prints a logical output of the comparison
+ */
 fn compare_words(reference: &String, attempt: &String, filter: &mut Filter){
     let mut chars_ref: Vec<Option<char>> = reference.chars().map(|c| Some(c)).collect();
     let chars_atm: Vec<char> = attempt.chars().collect();
@@ -80,6 +107,9 @@ fn compare_words(reference: &String, attempt: &String, filter: &mut Filter){
     println!("{}", chars_out.iter().map(|o| o.unwrap()).collect::<String>());
 }
 
+/**
+ * Function that prints the possible words according to the restraints
+ */
 fn print_filtered(vocabulary: &Vec<String>, filter: &Filter){
     'outer: for word in vocabulary{
         for npr in &filter.nonpresent_chars{
@@ -99,6 +129,9 @@ fn print_filtered(vocabulary: &Vec<String>, filter: &Filter){
     }
 }
 
+/**
+ * Function that lets the player add words to the vocabulary
+ */
 fn start_adding(vocabulary: &mut Vec<String>){
     let words_len = (*vocabulary.get(0).unwrap()).len();
     loop{
@@ -112,6 +145,9 @@ fn start_adding(vocabulary: &mut Vec<String>){
     }
 }
 
+/**
+ * Function that starts a new game
+ */
 fn new_game(vocabulary: &mut Vec<String>){
     let mut ref_word = get_input();
 
